@@ -1,11 +1,17 @@
 <template>
     <main class="max-w-6xl mx-auto p-6">
-    <StartMenu />
-        <section class="grid grid-cols-4 gap-1">
-            <div v-for="pic in pictures" class="flex justify-center items-center bg-gray-800 rounded hover:bg-gray-700 active:bg-gray-600" :class="pic.pair === true ? 'border-6 border-gray-50 bg-gray-50 hover:bg-gray-50 active:bg-gray-50' : ''">
-                <img :src="pic.img" alt="" @click="revealImage(pic)" class="rounded w-72 h-56" :class="[pic.open === true ? 'opacity-100 cursor-not-allowed pointer-events-none' : 'opacity-0 transition delay-50', pic.pair === true ? 'w-64 h-52 ease-in duration-100' : '']">
+        <div v-if="newGame == true">
+            <StartMenu @animal-selection="(selection) => animalSelection = (selection)"/>
+            <p>{{ animalSelection }}</p>
+        </div>
+            <div v-else="newGame == true">
+            <section v-if="showReplayScreen == false" class="grid grid-cols-4 gap-1">
+                <div v-for="pic in pictures" class="flex justify-center items-center bg-gray-800 rounded hover:bg-gray-700 active:bg-gray-600" :class="pic.pair === true ? 'border-6 border-gray-50 bg-gray-50 hover:bg-gray-50 active:bg-gray-50' : ''">
+                    <img :src="pic.img" alt="" @click="revealImage(pic)" class="rounded w-72 h-56" :class="[pic.open === true ? 'opacity-100 cursor-not-allowed pointer-events-none' : 'opacity-0 transition delay-50', pic.pair === true ? 'w-64 h-52 ease-in duration-100' : '']">
+                </div>
+            </section>
             </div>
-        </section>
+        <img v-else @click="startNewGame()" src="./assets/replay_screen.png" alt="" class="w-full h-full ease-in duration-100">
     </main>
 </template>
 
@@ -39,7 +45,9 @@ export default {
     },
     data() {
         return {
-            pictures: []
+            pictures: [],
+            showReplayScreen: false,
+            newGame: true
         }
     },
     mounted() {
@@ -104,8 +112,12 @@ export default {
                     confetti.addConfetti()
                     selectionArray[0].pair = true
                     selectionArray[1].pair = true
+                    this.showReplayScreen = true
                 }
             }
+        },
+        startNewGame() {
+            location.reload()
         }
     }
 }
