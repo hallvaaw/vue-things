@@ -11,7 +11,12 @@
 
 <script>
 import StartMenu from './components/StartMenu.vue'
+import JSConfetti from 'js-confetti'
+
+const confetti = new JSConfetti()
+
 let selectionArray = []
+let correctImages = 0
 
 function shuffle(inputArray) {
     let currentIndex = inputArray.length,  randomIndex;
@@ -25,10 +30,6 @@ function shuffle(inputArray) {
         ];
 }
   return inputArray;
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 export default {
@@ -90,11 +91,19 @@ export default {
                     selectionArray[0].pair = true
                     selectionArray[1].pair = true
                     selectionArray = []
+                    correctImages += 1
                 } else {
                     for (let i = 0; i < selectionArray.length; i++) {
                         selectionArray[i].open = false
                     }
                     selectionArray = []
+                }
+            }
+            if (correctImages == 5 && selectionArray.length == 2) {
+                if (selectionArray[0].id == selectionArray[1].id) {
+                    confetti.addConfetti()
+                    selectionArray[0].pair = true
+                    selectionArray[1].pair = true
                 }
             }
         }
