@@ -1,16 +1,13 @@
 <template>
     <main class="max-w-6xl mx-auto p-6">
-        <div v-if="newGame == true">
-            <StartMenu @animal-selection="(selection) => animalSelection = (selection)"/>
-            <p>{{ animalSelection }}</p>
+        <div v-if="newGame == true" :class="newGame == false ? 'hidden' : ''">
+            <StartMenu @animal-selection="(selection) => animalSelection = (selection)" @click="renderSelection()"/>
         </div>
-            <div v-else="newGame == true">
             <section v-if="showReplayScreen == false" class="grid grid-cols-4 gap-1">
                 <div v-for="pic in pictures" class="flex justify-center items-center bg-gray-800 rounded hover:bg-gray-700 active:bg-gray-600" :class="pic.pair === true ? 'border-6 border-gray-50 bg-gray-50 hover:bg-gray-50 active:bg-gray-50' : ''">
-                    <img :src="pic.img" alt="" @click="revealImage(pic)" class="rounded w-72 h-56" :class="[pic.open === true ? 'opacity-100 cursor-not-allowed pointer-events-none' : 'opacity-0 transition delay-50', pic.pair === true ? 'w-64 h-52 ease-in duration-100' : '']">
+                    <img :src="pic.img" alt="" @click="revealImage(pic)" class="rounded w-72 h-56" :class="[pic.open === true ? 'opacity-100 cursor-not-allowed pointer-events-none' : 'opacity-0 transition delay-500', pic.pair === true ? 'w-64 h-52 ease-in duration-100' : '']">
                 </div>
             </section>
-            </div>
         <img v-else @click="startNewGame()" src="./assets/replay_screen.png" alt="" class="w-full h-full ease-in duration-100">
     </main>
 </template>
@@ -23,6 +20,7 @@ const confetti = new JSConfetti()
 
 let selectionArray = []
 let correctImages = 0
+let timeDelay = 500
 
 function shuffle(inputArray) {
     let currentIndex = inputArray.length,  randomIndex;
@@ -47,13 +45,9 @@ export default {
         return {
             pictures: [],
             showReplayScreen: false,
-            newGame: true
+            newGame: true,
+            animalSelection: ''
         }
-    },
-    mounted() {
-        this.getDuck()
-        // this.getDog()
-        // this.getFox()
     },
     methods: {
         async getDuck() {
@@ -66,6 +60,7 @@ export default {
             }
 
             shuffle(this.pictures)
+            this.newGame = false
         },
         async getDog() {
             const dogRes = await fetch('http://localhost:8080/random.dog/doggos')
@@ -78,6 +73,7 @@ export default {
             }
 
             shuffle(this.pictures)
+            this.newGame = false
         },
         async getFox() {
             for (let i = 0; i < 6; i++) {
@@ -89,35 +85,41 @@ export default {
             }
 
             shuffle(this.pictures)
+            this.newGame = false
         },
         revealImage(e) {
             e.open = true
             selectionArray.push(e)
-            if (selectionArray.length > 2) {
+            if (selectionArray.length == 2) {
                 if (selectionArray[0].id == selectionArray[1].id) {
-                    selectionArray[2].open = false
                     selectionArray[0].pair = true
                     selectionArray[1].pair = true
                     selectionArray = []
                     correctImages += 1
                 } else {
-                    for (let i = 0; i < selectionArray.length; i++) {
-                        selectionArray[i].open = false
-                    }
-                    selectionArray = []
+                    setTimeout(function() {
+                        for (let i = 0; i < selectionArray.length; i++) {
+                            selectionArray[i].open = false
+                        }
+                        selectionArray = []}, timeDelay)
                 }
             }
-            if (correctImages == 5 && selectionArray.length == 2) {
-                if (selectionArray[0].id == selectionArray[1].id) {
-                    confetti.addConfetti()
-                    selectionArray[0].pair = true
-                    selectionArray[1].pair = true
-                    this.showReplayScreen = true
-                }
+            if (correctImages == 6) {
+                confetti.addConfetti()
+                this.showReplayScreen = true
             }
         },
         startNewGame() {
             location.reload()
+        },
+        renderSelection() {
+            if (this.animalSelection == 'duck') {
+                this.getDuck()
+            } else if (this.animalSelection == 'dog') {
+                this.getDog()
+            } else if (this.animalSelection == 'fox') {
+                this.getFox()
+            }
         }
     }
 }
