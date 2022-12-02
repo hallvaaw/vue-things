@@ -1,7 +1,6 @@
 <template>
   <div>
-    <p>{{ minutes }}</p>
-    <p>{{ seconds }}</p>
+    <p>{{ minutes }}: {{ seconds }}</p>
   </div>
 </template>
 
