@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>{{ minutes }}: {{ seconds }}</p>
+    <p class="text-4xl tracking-wide">{{ minutes }}:{{ seconds }}</p>
   </div>
 </template>
 
@@ -23,18 +23,17 @@ export default {
         }
     },
     methods: {
-        startTime() {
-            this.seconds++
-            if (this.seconds == 60) {
-                this.minutes++
-                this.seconds = 0
-            }
-        },
         timeDisplay() {
             setInterval(() => {
                 this.seconds++
+                if (this.seconds < 10) {
+                    this.seconds = "0" + this.seconds
+                }
                 if (this.seconds == 60) {
                     this.minutes++
+                    if (this.minutes < 10) {
+                        this.minutes = "0" + this.minutes
+                    }
                     this.seconds = 0
                 }
             }, 1000)
