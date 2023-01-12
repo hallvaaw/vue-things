@@ -1,17 +1,14 @@
 <template>
-  <div>
-    <p class="text-4xl tracking-wide">{{ minutes }}:{{ seconds }}</p>
-  </div>
+    <div>
+        <p class="text-gray-200 text-4xl tracking-wide">{{ minutes }}:{{ seconds }}</p>
+    </div>
 </template>
 
 <script>
 export default {
     name: "stopwatch",
     props: {
-        running: {
-            type: Boolean,
-            default: false
-        }
+        running: true
     },
     mounted() {
         this.timeDisplay()
